@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap");
+@theme {
+  --color-midnight: #102a2a;
+  --color-royal: #176b5b;
+  --color-forest: #12483f;
+  --color-gold: #d9bc83;
+  --color-ivory: #f8f7f2;
+  --color-pure-white: #ffffff;
+  --color-slate-text: #344054;
+  --color-sage: #e4eee9;
+  --color-mist: #dfe6e2;
+  --color-success: #287a52;
+  --color-rose: #b42336;
+
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Outfit", sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-mist);
+    scrollbar-width: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-slate-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: var(--color-midnight);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+
+  h1 {
+    font-size: 64px;
+  }
+
+  h2 {
+    font-size: 48px;
+  }
+
+  h3 {
+    font-size: 36px;
+  }
+
+  h4 {
+    font-size: 28px;
+  }
+
+  h5 {
+    font-size: 22px;
+  }
+
+  h6 {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 44px;
+    }
+    h2 {
+      font-size: 36px;
+    }
+    h3 {
+      font-size: 30px;
+    }
+    h4 {
+      font-size: 24px;
+    }
+    h5 {
+      font-size: 20px;
+    }
+    h6 {
+      font-size: 17px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 38px;
+    }
+    h2 {
+      font-size: 32px;
+    }
+    h3 {
+      font-size: 26px;
+    }
+    h4 {
+      font-size: 22px;
+    }
+    h5 {
+      font-size: 19px;
+    }
+    h6 {
+      font-size: 16px;
+    }
+  }
+}

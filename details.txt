@@ -1,0 +1,12 @@
+HomeCare SiteMap - https://gloomaps.com/ONKiptJ84O
+
+
+frontend - 
+    TanStack Query
+    Axios
+    React Hook Form + Zod 
+    React Router
+    Tailwind css
+    Lucide Icon
+    Zustand
+    React Hot Toast

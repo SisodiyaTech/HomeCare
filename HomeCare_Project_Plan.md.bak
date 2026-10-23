@@ -1,0 +1,743 @@
+# HomeCare --- Product Vision, Requirements & Frontend Plan
+
+**Document type:** Product requirements and implementation planning\
+**Project:** HomeCare\
+**Status:** Initial product plan --- to be refined as implementation
+decisions are made\
+**Primary platform:** Web application\
+**Frontend:** React + TypeScript (planned)\
+**Working model:** On-demand home nursing marketplace with real-time
+request matching
+
+------------------------------------------------------------------------
+
+## 1. Executive Summary
+
+HomeCare is a platform that connects patients and their families with
+nurses who can provide care at the patient's home. The product is
+inspired by the real-time request workflows of services such as Rapido,
+Zomato, and Swiggy, adapted for home nursing.
+
+A patient creates a nursing request, eligible nurses in the nearby
+service radius are notified, and the first eligible nurse to
+successfully accept the request wins the booking. If nobody accepts
+immediately, the request remains pending and visible to eligible users
+in the application.
+
+Patients may also choose a specific nurse directly. In that case, only
+that selected nurse can accept the request.
+
+The platform should support verified patient accounts, verified nurse
+profiles, advance payment, booking notifications, chat or calling after
+acceptance, location and duty-status updates, dual confirmation of duty
+start and completion, and a nurse payout workflow after duty completion
+is confirmed.
+
+**Product principle:** Make it easy to find and book appropriate nursing
+support while prioritizing patient trust, nurse safety, transparent
+payments, and reliable attendance records.
+
+## 2. Product Goals
+
+1.  Help patients and families request nursing care at home.
+2.  Connect a request with nearby eligible nurses quickly.
+3.  Prevent multiple nurses from winning the same request.
+4.  Allow both open nearby matching and direct selection of a specific
+    nurse.
+5.  Require appropriate account and document verification before
+    protected actions.
+6.  Keep patients and nurses informed through timely notifications.
+7.  Track arrival, duty start, duty completion, and departure.
+8.  Protect nurse safety and provide a clear escalation process.
+9.  Manage patient payments, platform fees, refunds, and nurse payouts
+    transparently.
+10. Provide an administrative workflow for verification, disputes,
+    support, and oversight.
+
+## 3. User Roles
+
+### 3.1 Patient / Client
+
+A patient or an authorized family member should be able to:
+
+-   Sign up and log in using email (including a supported Google sign-in
+    option if implemented) or mobile number.
+-   Verify their account and complete required profile information.
+-   Submit required information and documents before creating a request,
+    according to the approved verification policy.
+-   Enter the care requirement, service address, schedule, duration, and
+    other required booking details.
+-   Request a nurse through nearby matching or choose a specific nurse.
+-   Pay through the application before the request is dispatched or
+    confirmed, according to the payment policy.
+-   View pending requests and booking status.
+-   Receive a notification when a nurse accepts.
+-   Contact the accepted nurse through in-app chat or a supported
+    calling feature.
+-   View nurse arrival and duty-status updates.
+-   Confirm duty start and completion.
+-   View payment receipts, booking history, and support options.
+-   Report a safety concern, dispute, or booking problem.
+
+### 3.2 Nurse
+
+A nurse should be able to:
+
+-   Sign up and log in using supported authentication methods.
+-   Complete a professional profile.
+-   Submit required identity, qualification, registration, and other
+    applicable documents.
+-   Provide service areas, availability, skills, experience, and pricing
+    where applicable.
+-   Add one trusted relative/emergency contact for safety purposes.
+-   Wait for required verification and approval before accepting
+    requests.
+-   Receive nearby request notifications when eligible and available.
+-   Browse eligible pending requests in the app.
+-   Accept a request only if it is still available and the nurse meets
+    all requirements.
+-   View confirmed booking details and contact the patient/client.
+-   Update travel status (for example, "On the way").
+-   Mark arrival at the service location.
+-   Confirm duty start and duty completion.
+-   Mark departure after the duty, when appropriate.
+-   View payout status, earnings history, and relevant booking records.
+-   Access support and safety escalation tools.
+
+### 3.3 Admin / Operations Team
+
+An administrator or authorized operations team should be able to:
+
+-   Review and approve or reject nurse documents.
+-   Manage patient and nurse accounts.
+-   Review account status, verification status, and flagged activity.
+-   View and manage requests and bookings.
+-   Investigate booking conflicts, attendance disagreements, complaints,
+    and safety incidents.
+-   Manage refund and payout exceptions under controlled permissions.
+-   Configure service radius, supported services, platform rules, and
+    operational settings.
+-   Review audit logs and relevant platform reports.
+-   Suspend or restrict accounts where justified, following a documented
+    process.
+
+Admin permissions must be enforced by the backend, not only by hiding
+frontend routes.
+
+## 4. Main Booking Modes
+
+### 4.1 Nearby / Broadcast Request
+
+1.  Patient completes the required profile and verification steps.
+2.  Patient enters the nursing requirement and booking details.
+3.  The application validates the request and calculates eligible nurses
+    within the configured radius (initially envisioned as approximately
+    10--15 km).
+4.  The patient pays through the application, subject to the final
+    payment policy.
+5.  The booking request becomes open/pending and eligible nurses are
+    notified.
+6.  The request is also visible in the app to eligible nurses while it
+    remains pending.
+7.  The first eligible nurse whose acceptance is successfully committed
+    by the backend gets the booking.
+8.  The booking is assigned to that nurse, and the request is no longer
+    available to competing nurses.
+9.  The patient receives an acceptance notification and can contact the
+    assigned nurse.
+10. Other nurses who try to accept after the booking is assigned receive
+    a clear "already accepted" or equivalent response.
+
+### 4.2 Specific Nurse Request
+
+1.  Patient browses available nurse profiles.
+2.  Patient selects a particular nurse.
+3.  Patient submits the care requirement, schedule, and location.
+4.  Payment and request validation occur according to the chosen payment
+    policy.
+5.  Only the selected nurse receives and can accept the request.
+6.  If that nurse declines or does not respond before the configured
+    deadline, the system follows the product's chosen expiry,
+    cancellation, or re-request policy. It must not silently assign
+    another nurse unless the patient has explicitly chosen that option.
+
+### 4.3 Pending Request Visibility
+
+-   Pending requests should be visible only to nurses who are eligible
+    for that request.
+-   A request should no longer be actionable once it is accepted,
+    cancelled, expired, or otherwise closed.
+-   The backend is the source of truth for request status.
+-   The UI should refresh or receive real-time updates so nurses do not
+    continue to see stale actionable requests.
+-   The product must define request expiry, retry behavior, and what
+    happens if no nurse accepts.
+
+## 5. Verification and Eligibility
+
+### Patient / Client Verification
+
+The product owner must define which details and documents are mandatory.
+Potential items include:
+
+-   Verified email or mobile number.
+-   Basic identity and contact details.
+-   Patient or care-recipient details.
+-   Service address and any required address confirmation.
+-   Any additional documentation justified by the actual service model
+    and applicable law.
+
+Do not collect sensitive health or identity documents unless there is a
+clear operational and legal need. Explain why data is collected, who can
+access it, how long it is retained, and how it can be corrected or
+deleted.
+
+### Nurse Verification
+
+Potential checks include:
+
+-   Verified email or mobile number.
+-   Identity verification.
+-   Relevant nursing qualification documents.
+-   Applicable nursing registration/license and its validity, where
+    required.
+-   Experience and professional profile review.
+-   Any additional checks required by the service model and applicable
+    law.
+-   Trusted relative/emergency contact information for nurse safety.
+
+A nurse who has not completed the required approval process must not
+accept bookings. The application should display clear statuses such as
+`Incomplete`, `Under Review`, `Approved`, `Rejected`, `Expired`, or
+`Action Required`, as appropriate.
+
+**Important:** A UI badge saying "Verified" must reflect a real
+verification workflow. The platform should not imply that credentials
+were checked if they were not.
+
+## 6. Payment, Platform Fees, and Payouts
+
+### Intended flow
+
+1.  Patient reviews the price and payment terms.
+2.  Patient makes a payment through a supported payment provider.
+3.  The backend verifies the payment result with the provider before
+    treating the payment as successful.
+4.  The request is dispatched or confirmed according to the final
+    booking policy.
+5.  The accepted nurse completes the duty workflow.
+6.  Patient and nurse both confirm duty completion.
+7.  Once completion checks pass, the platform automatically initiates
+    the nurse payout, minus any clearly disclosed platform fee and other
+    agreed adjustments.
+8.  Both parties can view relevant payment, refund, and payout statuses.
+
+### Decisions required
+
+-   Is the patient's payment captured immediately or only authorized
+    until a nurse accepts?
+-   What happens if nobody accepts the request?
+-   What happens if the nurse cancels or does not arrive?
+-   What happens if the patient cancels?
+-   What happens if one party refuses to confirm duty completion?
+-   Is there a dispute or evidence-review window before payout?
+-   How are partial duties, overtime, extensions, and early termination
+    handled?
+-   What platform fee, tax, and payment-provider charges apply?
+-   Which payment provider and legally compliant marketplace payout
+    setup will be used?
+
+### Payment safety rules
+
+-   Never trust a frontend success screen alone; verify payment status
+    server-side.
+-   Do not store raw card details in the HomeCare database.
+-   Use payment-provider webhooks and idempotency controls where
+    supported.
+-   A duplicate webhook or retry must not cause duplicate charges or
+    payouts.
+-   Keep auditable records for payment, refund, fee, and payout state
+    changes.
+-   "Automatically pay the nurse immediately" is the product intention,
+    but payout should only proceed after required checks and dispute
+    rules are satisfied.
+
+## 7. Duty and Attendance Lifecycle
+
+The proposed journey is:
+
+1.  **Booking accepted** --- a nurse has won the request.
+2.  **On the way** --- nurse records that they have left for the
+    location.
+3.  **Arrived** --- nurse records arrival at the patient's service
+    location.
+4.  **Duty start requested/confirmed** --- nurse and patient each
+    confirm that the duty has started.
+5.  **Duty in progress** --- both required start confirmations have been
+    received.
+6.  **Duty completion requested/confirmed** --- each party confirms that
+    the scheduled duty is complete.
+7.  **Duty completed** --- the required completion confirmations and
+    validation checks pass.
+8.  **Payout processing / paid** --- the payout process starts and
+    eventually reaches a provider-confirmed final state.
+9.  **Departed** --- nurse records leaving the location after duty,
+    according to the defined workflow.
+
+### Important workflow details to define
+
+-   Whether nurse departure is recorded before or after payout
+    eligibility is checked.
+-   What happens if either party forgets or refuses to confirm.
+-   Whether the app uses a PIN, one-time code, QR code, or another
+    confirmation mechanism.
+-   Whether location evidence is required and, if so, at which events.
+-   What to do when GPS is unavailable or inaccurate.
+-   How corrections and disputed attendance are handled.
+-   Whether duty extensions need a separate patient approval and payment
+    step.
+
+The system must not get permanently stuck just because one participant
+is offline. Add reminders, support escalation, and a documented dispute
+workflow.
+
+## 8. Nurse Safety
+
+The product intends to collect one trusted relative's contact for nurse
+safety.
+
+Potential safeguards:
+
+-   Store the relative's name and contact details with clear consent and
+    a stated purpose.
+-   Explain when that contact may be used and who can access it.
+-   Verify the contact where appropriate.
+-   Provide a nurse-facing safety/help action.
+-   Keep relevant booking and attendance events auditable.
+-   Define escalation procedures for delayed arrival, unsafe conditions,
+    harassment, and emergencies.
+-   Avoid sharing the relative's contact with patients or other users
+    unless there is a clear, consented, lawful reason.
+-   Collect and retain location data only as needed for defined features
+    and safety purposes.
+
+An emergency contact feature is not a substitute for local emergency
+services or a complete safety process.
+
+## 9. Notifications and Real-Time Updates
+
+Notification events may include:
+
+-   Request created.
+-   Nearby eligible nurses notified.
+-   New eligible request visible in the app.
+-   Request accepted by a nurse.
+-   Request no longer available because another nurse accepted.
+-   Request declined, expired, or cancelled.
+-   Nurse on the way.
+-   Nurse arrived.
+-   Duty start confirmation requested/completed.
+-   Duty completion confirmation requested/completed.
+-   Payment, refund, or payout status changed.
+-   Verification approved, rejected, or requiring more information.
+-   Safety or support updates.
+
+Possible delivery channels:
+
+-   In-app notifications.
+-   Web push notifications, after permission and support are
+    implemented.
+-   SMS or email for selected critical events.
+-   Real-time updates via a technology such as WebSockets or Socket.IO,
+    if selected.
+
+The backend must remain authoritative. Notifications may be delayed or
+duplicated, so they must not themselves determine booking ownership or
+payment success.
+
+## 10. Core Product Pages
+
+### Public website
+
+-   Home
+-   How It Works
+-   Nursing Services
+-   Find Nurses (where public access is appropriate)
+-   About
+-   Contact / Help
+-   FAQ
+-   Terms of Service
+-   Privacy Policy
+-   Cancellation and Refund Policy
+-   Nurse onboarding information
+
+### Authentication
+
+-   Login
+-   Patient / client signup
+-   Nurse signup
+-   Email or mobile verification
+-   Forgot password / account recovery
+-   Verification status and required next steps
+
+### Patient / Client dashboard
+
+-   Overview
+-   Create a Nursing Request
+-   Nearby / open request status
+-   Browse and filter nurses
+-   Nurse profile details
+-   Specific nurse request
+-   My Bookings
+-   Booking details and timeline
+-   Chat / calling entry point
+-   Duty start and completion confirmation
+-   Payments and receipts
+-   Profile and verification
+-   Help, complaints, and safety support
+
+### Nurse dashboard
+
+-   Overview
+-   Professional profile
+-   Credential upload and verification status
+-   Availability and service radius
+-   Nearby pending requests
+-   Request details and accept action
+-   Active booking
+-   On-the-way and arrival updates
+-   Duty start / completion confirmation
+-   Departure update
+-   Earnings and payouts
+-   Trusted contact / safety settings
+-   Support and disputes
+
+### Admin dashboard
+
+-   Overview and operational metrics
+-   Patient/client management
+-   Nurse management
+-   Credential verification queue
+-   Requests and booking management
+-   Payment and payout status overview
+-   Refund/dispute queue
+-   Complaints and safety incident workflow
+-   Audit log
+-   Platform configuration and reports
+
+## 11. Frontend Architecture --- React + TypeScript
+
+Recommended approach: **one React application with shared components and
+separate role-specific layouts and pages**. Do not start with three
+independent frontend applications unless a future operational or
+deployment requirement makes that worthwhile.
+
+A suggested `src/` structure:
+
+``` text
+src/
+├── app/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── router.tsx
+│   └── providers.tsx
+│
+├── assets/
+│   ├── images/
+│   ├── icons/
+│   └── fonts/
+│
+├── components/
+│   ├── ui/                 # Button, Input, Dialog, Badge, Card
+│   ├── forms/              # Shared form fields
+│   ├── feedback/           # Toasts, loading, empty/error states
+│   ├── data-display/       # Shared tables, status labels
+│   └── auth/               # RequireAuth, RequireRole, RequireGuest
+│
+├── layouts/
+│   ├── PublicLayout.tsx
+│   ├── AuthLayout.tsx
+│   ├── UserLayout.tsx
+│   ├── NurseLayout.tsx
+│   └── AdminLayout.tsx
+│
+├── pages/
+│   ├── public/
+│   ├── auth/
+│   ├── user/
+│   ├── nurse/
+│   ├── admin/
+│   ├── UnauthorizedPage.tsx
+│   └── NotFoundPage.tsx
+│
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── schemas/
+│   │   └── types/
+│   ├── nurses/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   └── types/
+│   ├── requests/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   └── schemas/
+│   ├── bookings/
+│   ├── attendance/
+│   ├── payments/
+│   ├── notifications/
+│   ├── chat/
+│   ├── profile/
+│   ├── verification/
+│   ├── safety/
+│   └── admin/
+│
+├── services/
+│   ├── apiClient.ts
+│   └── uploadService.ts
+│
+├── hooks/
+│   ├── useDebounce.ts
+│   └── useMediaQuery.ts
+│
+├── lib/
+│   ├── queryClient.ts
+│   ├── utils.ts
+│   └── dateUtils.ts
+│
+├── schemas/
+│   └── shared.schema.ts
+│
+├── types/
+│   ├── user.types.ts
+│   ├── nurse.types.ts
+│   ├── request.types.ts
+│   ├── booking.types.ts
+│   ├── payment.types.ts
+│   └── api.types.ts
+│
+└── styles/
+    └── index.css
+```
+
+Keep components that belong to a single feature inside that feature. Put
+truly reusable, generic UI elements in `components/ui/`. Avoid creating
+empty folders until the relevant feature is implemented.
+
+### Suggested frontend libraries
+
+-   React + TypeScript + Vite --- app foundation.
+-   React Router --- route handling and nested layouts.
+-   TanStack Query --- server data, caching, mutations, and refetching.
+-   Axios or `fetch` --- API requests; choose one primary approach.
+-   React Hook Form + Zod --- forms and validation.
+-   Tailwind CSS + shadcn/ui --- styling and accessible UI primitives.
+-   Lucide React --- icons.
+-   Zustand --- optional shared client state when it is actually needed.
+-   Socket.IO client or another supported realtime client --- only after
+    the backend realtime design is selected.
+-   Vitest + React Testing Library --- frontend tests.
+
+Do not put payment, booking assignment, role authorization, or
+credential verification rules only in the frontend. The backend must
+enforce them.
+
+## 12. Design System
+
+The intended visual direction is premium, modern, calm, and trustworthy.
+
+Proposed core palette:
+
+  Purpose                      Color              Hex
+  ---------------------------- ------------------ -----------
+  Deep brand / dark surfaces   Midnight Emerald   `#102A2A`
+  Primary actions              Royal Emerald      `#176B5B`
+  Hover / deeper accent        Deep Forest        `#12483F`
+  Premium accent               Champagne Gold     `#D9BC83`
+  Main background              Warm Ivory         `#F8F7F2`
+  Cards and forms              White              `#FFFFFF`
+  Primary text                 Slate              `#344054`
+  Muted surfaces               Muted Sage         `#E4EEE9`
+  Borders                      Border Mist        `#DFE6E2`
+  Success                      Success Green      `#287A52`
+  Error                        Error Rose         `#B42336`
+
+Use ivory and white for most content surfaces, emerald for key actions
+and navigation, and gold sparingly. Maintain readable contrast and never
+use color alone to convey a status.
+
+## 13. Technical Rules and Edge Cases
+
+### Request acceptance
+
+-   The backend must atomically claim a request for one nurse only.
+-   Validate nurse approval, availability, location eligibility, and
+    request state on the server at acceptance time.
+-   A nurse cannot accept a request that is already accepted, cancelled,
+    expired, or otherwise closed.
+-   The client must handle conflicts gracefully and refresh the current
+    request state.
+-   Notifications and the UI list are not the source of truth.
+
+### Location matching
+
+-   Define what "within 10--15 km" means: straight-line distance, road
+    distance, or a configurable radius.
+-   Define which location is used for matching and when it is updated.
+-   Ask permission before accessing device location and provide a manual
+    address/location alternative where possible.
+-   Do not expose exact patient addresses to nurses who are not assigned
+    to the booking.
+-   Define behavior when location permission is denied or location is
+    inaccurate.
+
+### Availability
+
+-   Nurses must be eligible, approved, and available to receive or
+    accept a request.
+-   Define how overlapping bookings and schedule conflicts are
+    prevented.
+-   Define how nurse availability changes affect requests already sent.
+-   Define whether the radius is fixed or configurable per service area.
+
+### Attendance and disputes
+
+-   Record who submitted each event and when.
+-   Use server timestamps for important state transitions.
+-   Handle missing confirmations, poor connectivity, and conflicting
+    reports.
+-   Provide a support/dispute path before finalizing a contested payout.
+-   Define what evidence, if any, may be collected and retained.
+
+### Privacy and security
+
+-   Use secure authentication and server-side authorization.
+-   Keep identity documents, health-related data, emergency contacts,
+    and precise location access restricted.
+-   Define data retention, consent, deletion/correction, and access
+    policies.
+-   Avoid exposing sensitive details in push notifications or logs.
+-   Use HTTPS in production and protect authenticated routes and APIs.
+-   Ensure the admin dashboard cannot be accessed merely by changing a
+    frontend role value.
+
+## 14. MVP Scope --- Recommended First Release
+
+Build the system in increments rather than trying to implement every
+feature at once.
+
+### Phase 1 --- Foundation
+
+-   Public website and core design system.
+-   Login/signup and verified contact details.
+-   Patient and nurse profiles.
+-   Nurse document submission and admin approval.
+-   Role-specific layouts and protected routing.
+
+### Phase 2 --- Request matching
+
+-   Create a nursing request.
+-   Nearby eligible nurse matching.
+-   Pending requests list.
+-   First-successful-acceptance logic.
+-   Specific nurse request.
+-   Request status updates and basic notifications.
+
+### Phase 3 --- Booking and duty workflow
+
+-   Booking details and status timeline.
+-   Nurse on-the-way and arrival updates.
+-   Dual confirmation of duty start and completion.
+-   Cancellation, no-show, and dispute paths.
+-   Safety contact and support flow.
+
+### Phase 4 --- Payments and realtime experience
+
+-   Payment-provider integration and verified payment events.
+-   Refund rules.
+-   Nurse payout integration and payout status.
+-   Real-time request updates and notifications.
+-   Chat or calling after acceptance.
+
+### Phase 5 --- Hardening and launch
+
+-   Security and authorization review.
+-   Booking concurrency tests.
+-   Payment idempotency and webhook tests.
+-   Mobile responsive and accessibility testing.
+-   Operational monitoring and support procedures.
+-   Privacy policy, terms, cancellation policy, and applicable
+    compliance review.
+
+The order can change depending on the selected payment provider and the
+business model. For example, payment architecture should be designed
+before relying on automatic nurse payouts.
+
+## 15. Decisions Still Open
+
+The following are not yet confirmed and should not be treated as settled
+requirements:
+
+1.  **Service geography:** Initial city/launch area and whether the
+    radius is 10 km, 15 km, or configurable.
+2.  **Pricing:** Per hour, per visit, per shift, or service-specific
+    pricing.
+3.  **Payment timing:** Capture before broadcasting, authorize first and
+    capture after acceptance, or another supported marketplace flow.
+4.  **No nurse accepts:** Automatic refund, retry, request expiry, or
+    another process.
+5.  **Cancellation and no-show:** Fees, refunds, and evidence
+    requirements.
+6.  **Duty confirmations:** PIN/OTP, dual buttons, location evidence, or
+    a combination.
+7.  **Disputes:** What happens when patient and nurse disagree on
+    completion.
+8.  **Payout timing:** Immediate initiation after successful completion
+    checks versus a short safety/dispute hold.
+9.  **Specific nurse request:** Expiry, reminder, and whether the
+    patient may then broadcast to others.
+10. **Contact methods:** Email, mobile OTP, Google sign-in, and account
+    recovery details.
+11. **Realtime technology:** WebSockets/Socket.IO or another option.
+12. **Communication:** In-app chat, masked calling, or external phone
+    contact.
+13. **Nurse safety:** Relative-contact verification, consent,
+    escalation, and emergency workflows.
+14. **Verification policy:** Exact required documents and approval
+    criteria.
+15. **Legal and operational requirements:** Applicable healthcare,
+    marketplace, privacy, tax, payment, and professional licensing
+    obligations for the launch location.
+
+## 16. Working Agreement for Future Project Discussions
+
+When continuing HomeCare development, use this document as the current
+product reference.
+
+-   Prefer one React + TypeScript frontend with shared components and
+    separate User, Nurse, and Admin layouts.
+-   Keep the on-demand nearby nurse request model and
+    first-successful-acceptance rule in mind.
+-   Include the specific-nurse request option.
+-   Treat patient and nurse verification as core workflows.
+-   Include the full travel, arrival, duty start, duty completion,
+    departure, and payout lifecycle when discussing bookings.
+-   Include nurse safety and trusted-relative contact requirements where
+    relevant.
+-   Distinguish confirmed requirements from open product decisions.
+-   Do not invent features or business rules that the owner has not
+    confirmed.
+-   Prioritize reliable backend enforcement for booking ownership,
+    authorization, payments, verification, and payout decisions.
+-   Keep frontend guidance practical, modular, accessible, responsive,
+    and suitable for React + TypeScript.
+
+------------------------------------------------------------------------
+
+**End of current plan.** Update this document as product decisions
+become final.
