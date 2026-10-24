@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Smartphone,
   Navigation,
   Activity,
   ShieldAlert,
@@ -10,8 +9,7 @@ import {
   Download,
   CheckCircle,
   Sparkles,
-  ArrowRight,
-  Star
+  Star,
 } from "lucide-react";
 
 const AppFeatures = () => {

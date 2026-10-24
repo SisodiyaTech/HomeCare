@@ -6,8 +6,6 @@ import {
   ArrowRight,
   Download,
   Clock,
-  Heart,
-  CheckCircle2,
 } from "lucide-react";
 
 const Hero = () => {
